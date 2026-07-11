@@ -45,6 +45,13 @@ exports.register = async (req, res, next) => {
         education: user.education,
         preferredLanguage: user.preferredLanguage,
         role: user.role,
+        xp: user.xp,
+        streak: user.streak,
+        hearts: user.hearts,
+        dailyGoal: user.dailyGoal,
+        achievements: user.achievements,
+        badges: user.badges,
+        unlockedLessons: user.unlockedLessons,
       },
     });
   } catch (error) {
@@ -84,6 +91,13 @@ exports.login = async (req, res, next) => {
         education: user.education,
         preferredLanguage: user.preferredLanguage,
         role: user.role,
+        xp: user.xp,
+        streak: user.streak,
+        hearts: user.hearts,
+        dailyGoal: user.dailyGoal,
+        achievements: user.achievements,
+        badges: user.badges,
+        unlockedLessons: user.unlockedLessons,
       },
     });
   } catch (error) {
@@ -138,10 +152,35 @@ exports.updateProfile = async (req, res, next) => {
         education: user.education,
         preferredLanguage: user.preferredLanguage,
         role: user.role,
+        xp: user.xp,
+        streak: user.streak,
+        hearts: user.hearts,
+        dailyGoal: user.dailyGoal,
+        achievements: user.achievements,
+        badges: user.badges,
+        unlockedLessons: user.unlockedLessons,
       },
     });
   } catch (error) {
     next(error);
   }
 };
+
+// @desc    Refill user hearts
+// @route   POST /api/auth/refill-hearts
+// @access  Private
+exports.refillHearts = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    user.hearts = 5;
+    await user.save();
+    res.status(200).json({ success: true, hearts: user.hearts });
+  } catch (error) {
+    next(error);
+  }
+};
+
 

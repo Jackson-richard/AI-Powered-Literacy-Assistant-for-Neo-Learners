@@ -35,14 +35,52 @@ const UserSchema = new mongoose.Schema(
     },
     preferredLanguage: {
       type: String,
-      enum: ['English', 'Tamil', 'Hindi', 'Kannada'],
+      enum: ['English', 'Tamil', 'Hindi', 'Kannada', 'Telugu'],
       default: 'English',
     },
     role: {
       type: String,
-      enum: ['admin', 'learner'],
+      enum: ['admin', 'teacher', 'learner'],
       default: 'learner',
     },
+    xp: {
+      type: Number,
+      default: 0,
+    },
+    streak: {
+      type: Number,
+      default: 0,
+    },
+    hearts: {
+      type: Number,
+      default: 5,
+    },
+    dailyGoal: {
+      type: Number,
+      default: 50, // default target XP per day
+    },
+    lastActive: {
+      type: Date,
+      default: Date.now,
+    },
+    unlockedLessons: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Lesson',
+      },
+    ],
+    achievements: [
+      {
+        title: { type: String, required: true },
+        description: { type: String, required: true },
+        unlockedAt: { type: Date, default: Date.now },
+      },
+    ],
+    badges: [
+      {
+        type: String,
+      },
+    ],
   },
   {
     timestamps: true,

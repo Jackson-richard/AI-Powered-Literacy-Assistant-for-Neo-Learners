@@ -26,7 +26,7 @@ const LessonTranslationSchema = new mongoose.Schema(
     language: {
       type: String,
       required: true,
-      enum: ['English', 'Tamil', 'Hindi', 'Kannada'],
+      enum: ['English', 'Tamil', 'Hindi', 'Kannada', 'Telugu'],
     },
     title: {
       type: String,

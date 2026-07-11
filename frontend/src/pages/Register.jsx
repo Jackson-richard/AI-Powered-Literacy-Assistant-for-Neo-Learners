@@ -200,6 +200,7 @@ const Register = () => {
                       <MenuItem value="Hindi">Hindi (हिंदी)</MenuItem>
                       <MenuItem value="Tamil">Tamil (தமிழ்)</MenuItem>
                       <MenuItem value="Kannada">Kannada (ಕನ್ನಡ)</MenuItem>
+                      <MenuItem value="Telugu">Telugu (తెలుగు)</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -216,6 +217,7 @@ const Register = () => {
                       sx={{ borderRadius: 3 }}
                     >
                       <MenuItem value="learner">Learner</MenuItem>
+                      <MenuItem value="teacher">Teacher</MenuItem>
                       <MenuItem value="admin">Instructor / Admin</MenuItem>
                     </Select>
                   </FormControl>

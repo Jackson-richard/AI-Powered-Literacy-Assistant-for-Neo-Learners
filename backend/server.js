@@ -22,12 +22,14 @@ const currRoutes = require('./routes/currRoutes');
 const lessonRoutes = require('./routes/lessonRoutes');
 const assessRoutes = require('./routes/assessRoutes');
 const resultRoutes = require('./routes/resultRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/curriculum', currRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/assessments', assessRoutes);
 app.use('/api', resultRoutes); // Mount /responses and /results under /api
+app.use('/api/ai', aiRoutes);
 
 // Base check route
 app.get('/', (req, res) => {

@@ -13,9 +13,8 @@ dotenv.config();
 
 const seed = async () => {
   try {
-    await mongoose.connect(
-      process.env.MONGODB_URI || 'mongodb://localhost:27017/literacy_assistant'
-    );
+    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/literacy_assistant';
+    await mongoose.connect(mongoUri);
     console.log('Connected to MongoDB for seeding...');
 
     // Clear existing data
@@ -30,36 +29,49 @@ const seed = async () => {
 
     console.log('Cleaned old records successfully.');
 
-    // 1. Create Users
+    // 1. Create Users (Admin, Teacher, Learner)
     const adminUser = await User.create({
-      name: 'Admin Instructor',
+      name: 'System Admin',
       email: 'admin@literacy.com',
-      password: 'admin123', // Will be hashed via User.pre('save')
-      age: 35,
-      education: 'Master of Education',
+      password: 'admin123',
+      age: 38,
+      education: 'PhD in Linguistics',
       preferredLanguage: 'English',
       role: 'admin',
     });
 
-    const learnerUser = await User.create({
-      name: 'Rohan Kumar',
-      email: 'learner@literacy.com',
-      password: 'learner123',
-      age: 22,
-      education: 'Primary Schooling',
+    const teacherUser = await User.create({
+      name: 'Anjali Sharma',
+      email: 'teacher@literacy.com',
+      password: 'teacher123',
+      age: 34,
+      education: 'Master of Education',
       preferredLanguage: 'Hindi',
-      role: 'learner',
+      role: 'teacher',
     });
 
-    console.log('Seed: Created Admin and Learner users.');
+    const learnerUser = await User.create({
+      name: 'Ramu Rao',
+      email: 'learner@literacy.com',
+      password: 'learner123',
+      age: 62,
+      education: 'None',
+      preferredLanguage: 'Telugu',
+      role: 'learner',
+      xp: 40,
+      streak: 2,
+      hearts: 5,
+    });
+
+    console.log('Seed: Created Admin, Teacher, and Learner profiles.');
 
     // 2. Create Lessons
-    // Lesson 1: Vowels and Alphabet
+    // Lesson 1: Alphabets & Basic Sounds (Beginner)
     const lesson1 = await Lesson.create({
-      title: 'Alphabet & Vowel Basics',
-      description: 'Learn fundamental sounds, vowels, and basic pronunciations.',
+      title: 'Vowels & Pronunciation Basics',
+      description: 'Learn the first group of sounds and letters in your chosen language.',
       difficulty: 'Beginner',
-      estimatedDuration: 15,
+      estimatedDuration: 10,
       category: 'Alphabet',
       status: 'published',
     });
@@ -68,234 +80,193 @@ const seed = async () => {
     const trans1En = await LessonTranslation.create({
       lessonId: lesson1._id,
       language: 'English',
-      title: 'Alphabet & Vowel Basics',
-      description: 'Learn fundamental sounds, vowels, and basic pronunciations.',
+      title: 'Vowels & Sounds',
+      description: 'Learn simple English vowel sounds.',
       learningMaterials: `
-# English Vowel Basics
-In English, there are 26 letters in the alphabet. Among these, **5 are vowels**:
-* **A** (as in Apple)
-* **E** (as in Egg)
-* **I** (as in Ink)
-* **O** (as in Orange)
-* **U** (as in Umbrella)
+# English Vowels
+The English alphabet has 26 letters. Out of these, 5 letters are **vowels**:
+* **A** (Apple)
+* **E** (Egg)
+* **I** (Ink)
+* **O** (Orange)
+* **U** (Umbrella)
 
-All other letters are called **consonants** (e.g., B, C, D, F, G). Vowels are essential because they form the core sound of almost every word.
+Consonants are all the other letters (e.g. B, C, D).
       `,
       exercises: [
-        {
-          question: 'Which of the following is an English vowel?',
-          options: ['B', 'C', 'E', 'D'],
-          correctAnswer: 'E',
-        },
+        { question: 'Which letter is an English vowel?', options: ['B', 'P', 'E', 'Z'], correctAnswer: 'E' }
       ],
-      status: 'published',
+      status: 'published'
     });
 
     const trans1Hi = await LessonTranslation.create({
       lessonId: lesson1._id,
       language: 'Hindi',
-      title: 'वर्णमाला और स्वर की बुनियादी बातें',
-      description: 'बुनियादी ध्वनियों, स्वरों और मूल उच्चारणों को सीखें।',
+      title: 'स्वर वर्ण और बुनियादी ध्वनियां',
+      description: 'हिंदी स्वर और उनकी उच्चारण ध्वनियों को सीखें।',
       learningMaterials: `
-# हिंदी स्वर की बुनियादी बातें
-हिंदी वर्णमाला में दो प्रकार के वर्ण होते हैं: स्वर और व्यंजन। **स्वर** वे वर्ण होते हैं जिनका उच्चारण स्वतंत्र रूप से किया जाता है:
+# हिंदी स्वर वर्ण
+हिंदी वर्णमाला में अ से अः तक स्वर वर्ण होते हैं। स्वर स्वतंत्र ध्वनियां हैं:
 * **अ** (अक्षर)
 * **आ** (आम)
 * **इ** (इमली)
 * **ई** (ईख)
-* **उ** (उल्लू)
-* **ऊ** (ऊन)
 
-ये स्वर शब्दों में मात्राओं का आधार बनते हैं।
+ये स्वर शब्दों में मात्राओं का काम करते हैं।
       `,
       exercises: [
-        {
-          question: 'इनमें से कौन सा एक स्वर वर्ण है?',
-          options: ['क', 'ख', 'अ', 'ग'],
-          correctAnswer: 'अ',
-        },
+        { question: 'इनमें से कौन सा एक स्वर वर्ण है?', options: ['क', 'अ', 'ख', 'ग'], correctAnswer: 'अ' }
       ],
-      status: 'published',
+      status: 'published'
     });
 
     const trans1Ta = await LessonTranslation.create({
       lessonId: lesson1._id,
       language: 'Tamil',
-      title: 'எழுத்துக்கள் மற்றும் உயிரெழுத்துக்கள்',
-      description: 'அடிப்படை ஒலிகள் மற்றும் உச்சரிப்புகளைக் கற்றுக்கொள்ளுங்கள்.',
+      title: 'உயிரெழுத்துக்கள் அறிமுகம்',
+      description: 'தமிழ் மொழியின் முதல் ஒலி வடிவங்களைக் கற்கவும்.',
       learningMaterials: `
 # தமிழ் உயிரெழுத்துக்கள்
-தமிழ் மொழியில் உயிரெழுத்துக்கள் **12** உள்ளன. இவை மொழியின் அடிப்படையான ஒலிகளை உருவாக்குகின்றன:
+தமிழ் மொழியின் உயிர்நாடியாக விளங்குவது உயிரெழுத்துக்கள் 12 ஆகும்:
 * **அ** (அம்மா)
 * **ஆ** (ஆடு)
 * **இ** (இலை)
 * **ஈ** (ஈட்டி)
 
-உயிரெழுத்துக்கள் பிற மெய்யெழுத்துக்களுடன் இணைந்து உயிர்மெய் எழுத்துக்களை உருவாக்குகின்றன.
+இவை பிற எழுத்துக்களுடன் இணைந்து உயிர்மெய் எழுத்துக்களை உருவாக்குகிறது.
       `,
       exercises: [
-        {
-          question: 'பின்வருவனவற்றில் உயிரெழுத்து எது?',
-          options: ['க்', 'ச்', 'அ', 'த்'],
-          correctAnswer: 'அ',
-        },
+        { question: 'உயிரெழுத்துக்களில் முதல் எழுத்து எது?', options: ['ஆ', 'அ', 'இ', 'உ'], correctAnswer: 'அ' }
       ],
-      status: 'published',
+      status: 'published'
     });
 
-    const trans1Kn = await LessonTranslation.create({
+    const trans1Te = await LessonTranslation.create({
       lessonId: lesson1._id,
-      language: 'Kannada',
-      title: 'ವರ್ಣಮಾಲೆ ಮತ್ತು ಸ್ವರಗಳ ಮೂಲಗಳು',
-      description: 'ಮೂಲಭೂತ ಧ್ವನಿಗಳು ಮತ್ತು ಉಚ್ಚಾರಣೆಗಳನ್ನು ಕಲಿಯಿರಿ.',
+      language: 'Telugu',
+      title: 'తెలుగు అచ్చులు పరిచయం',
+      description: 'తెలుగు భాషలోని మొదటి అక్షరాలను మరియు శబ్దాలను నేర్చుకోండి.',
       learningMaterials: `
-# ಕನ್ನಡ ಸ್ವರಗಳು
-ಕನ್ನಡ ವರ್ಣಮಾಲೆಯಲ್ಲಿ ಪ್ರಮುಖವಾಗಿ **ಸ್ವರಗಳು** ಸ್ವತಂತ್ರವಾಗಿ ಉಚ್ಚರಿಸಬಹುದಾದ ಅಕ್ಷರಗಳಾಗಿವೆ:
-* **ಅ** (ಅಮ್ಮ)
-* **ಆ** (ಆನೆ)
-* **ಇ** (ಇಲಿ)
-* **ಈ** (ಈಶ್ವರ)
+# తెలుగు అచ్చులు
+తెలుగు వర్ణమాలలో మొదటి భాగం అచ్చులు. ఇవి స్వతంత్రంగా పలికే అక్షరాలు:
+* **అ** (అమ్మ)
+* **ఆ** (ఆవు)
+* **ఇ** (ఇల్లు)
+* **ఈ** (ఈల)
 
-ಈ ಅಕ್ಷರಗಳು ಕನ್ನಡ ಭಾಷೆಯ ಉಚ್ಚಾರಣೆಗೆ ಅಡಿಪಾಯವಾಗಿವೆ.
+తెలుగు భాషలో అచ్చులు చాలా ముఖ్యమైనవి.
       `,
       exercises: [
-        {
-          question: 'ಇವುಗಳಲ್ಲಿ ಸ್ವರ ಅಕ್ಷರ ಯಾವುದು?',
-          options: ['ಕ್', 'ಚ್', 'ಅ', 'ತ್'],
-          correctAnswer: 'ಅ',
-        },
+        { question: 'కింది వాటిలో అచ్చు అక్షరం ఏది?', options: ['క', 'చ', 'అ', 'ట'], correctAnswer: 'అ' }
       ],
-      status: 'published',
+      status: 'published'
     });
 
-    // Save translation references back to lesson 1
-    lesson1.translations.push(trans1En._id, trans1Hi._id, trans1Ta._id, trans1Kn._id);
+    lesson1.translations.push(trans1En._id, trans1Hi._id, trans1Ta._id, trans1Te._id);
     await lesson1.save();
 
-    // Lesson 2: Word Formations
+
+    // Lesson 2: Word Formations (Intermediate)
     const lesson2 = await Lesson.create({
-      title: 'Constructing Simple Words',
-      description: 'Learn to combine individual letters to form simple common nouns.',
-      difficulty: 'Beginner',
-      estimatedDuration: 20,
-      category: 'Words',
+      title: 'Sentence Building Basics',
+      description: 'Learn to group words into clean, readable sentences.',
+      difficulty: 'Intermediate',
+      estimatedDuration: 15,
+      category: 'Sentence Building',
       status: 'published',
     });
 
-    // Translations for Lesson 2
     const trans2En = await LessonTranslation.create({
       lessonId: lesson2._id,
       language: 'English',
-      title: 'Constructing Simple Words',
-      description: 'Learn to combine individual letters to form simple common nouns.',
+      title: 'Simple Sentences',
+      description: 'Learn simple subject-verb structures.',
       learningMaterials: `
-# Combining Letters
-When we join consonants and vowels together, we create **words**:
-* **C-A-T** spell **CAT** (a pet that meows)
-* **D-O-G** spell **DOG** (a pet that barks)
-* **P-E-N** spell **PEN** (an object used to write)
+# Building Sentences
+To form a sentence, we join a **Subject** (who is acting) and a **Verb** (what is happening):
+* **The cat runs.** (Subject: Cat | Verb: Runs)
+* **We write words.** (Subject: We | Verb: Write)
 
-Practicing spelling helps in reading complete sentences.
+Proper spacing and order makes sentences readable.
       `,
       exercises: [
-        {
-          question: 'What does C-A-T spell?',
-          options: ['DOG', 'CAT', 'BAT', 'RAT'],
-          correctAnswer: 'CAT',
-        },
+        { question: 'Identify the verb in: "The boy sleeps."', options: ['Boy', 'The', 'Sleeps', 'House'], correctAnswer: 'Sleeps' }
       ],
-      status: 'published',
+      status: 'published'
     });
 
     const trans2Hi = await LessonTranslation.create({
       lessonId: lesson2._id,
       language: 'Hindi',
-      title: 'सरल शब्द रचना',
-      description: 'सरल सामान्य संज्ञा बनाने के लिए अलग-अलग अक्षरों को जोड़ना सीखें।',
+      title: 'सरल वाक्य निर्माण',
+      description: 'शब्दों को जोड़कर सरल और अर्थपूर्ण वाक्य बनाना सीखें।',
       learningMaterials: `
-# दो अक्षरों वाले शब्द
-जब हम दो या अधिक वर्णों को जोड़ते हैं, तो **शब्द** बनते हैं:
-* **न + ल = नल** (पानी का स्रोत)
-* **फ + ल = फल** (खाने योग्य मीठा फल)
-* **ज + ल = जल** (पानी)
+# वाक्य रचना
+हिंदी में वाक्य की सामान्य रचना **कर्ता + कर्म + क्रिया** होती है:
+* **राम पुस्तक पढ़ता है।** (राम = कर्ता | पढ़ना = क्रिया)
+* **लड़का दौड़ता है।**
 
-इन सरल शब्दों को पढ़ना वाक्य निर्माण की पहली सीढ़ी है।
+वाक्य के अंत में पूर्ण विराम (।) लगाया जाता है।
       `,
       exercises: [
-        {
-          question: 'न और ल को जोड़ने पर क्या शब्द बनता है?',
-          options: ['फल', 'जल', 'नल', 'कल'],
-          correctAnswer: 'नल',
-        },
+        { question: 'वाक्य "राम खाता है" में क्रिया क्या है?', options: ['राम', 'है', 'खाता', 'घर'], correctAnswer: 'खाता' }
       ],
-      status: 'published',
+      status: 'published'
     });
 
     const trans2Ta = await LessonTranslation.create({
       lessonId: lesson2._id,
       language: 'Tamil',
-      title: 'எளிய சொற்களை உருவாக்குதல்',
-      description: 'எழுத்துக்களை இணைத்து எளிய சொற்களை உருவாக்கக் கற்றுக்கொள்ளுங்கள்.',
+      title: 'எளிய வாக்கியங்கள் அமைத்தல்',
+      description: 'சொற்களை இணைத்து தெளிவான வாக்கியங்களை உருவாக்கக் கற்றுக்கொள்ளுங்கள்.',
       learningMaterials: `
-# சொற்கள் அறிவோம்
-எழுத்துக்கள் ஒன்றுடன் ஒன்று சேரும்போது **சொற்கள்** உருவாகின்றன:
-* **ப - ட - ம் = படம்** (ஓவியம் அல்லது ஒளிப்படம்)
-* **ம - ர - ம் = மரம்** (இயற்கை தாவரம்)
-* **ப - ல் = பல்** (உடலின் ஒரு பகுதி)
+# வாக்கியம் அமைப்போம்
+எழுவாய், செயப்படுபொருள், பயனிலை ஆகியவற்றை இணைத்தால் வாக்கியங்கள் உருவாகும்:
+* **நான் பாடம் எழுதுகிறேன்.** (எழுவாய்: நான் | பயனிலை: எழுதுகிறேன்)
+* **ஆடு புல் மேய்கிறது.**
       `,
       exercises: [
-        {
-          question: 'ப, ட, ம் ஆகிய எழுத்துக்களை இணைத்தால் வரும் சொல் எது?',
-          options: ['அம்மா', 'படம்', 'மரம்', 'பல்'],
-          correctAnswer: 'படம்',
-        },
+        { question: '"நான் படிக்கிறேன்" என்பதில் உள்ள பயனிலை எது?', options: ['நான்', 'படிக்கிறேன்', 'புத்தகம்', 'பள்ளி'], correctAnswer: 'படிக்கிறேன்' }
       ],
-      status: 'published',
+      status: 'published'
     });
 
-    const trans2Kn = await LessonTranslation.create({
+    const trans2Te = await LessonTranslation.create({
       lessonId: lesson2._id,
-      language: 'Kannada',
-      title: 'ಸರಳ ಪದಗಳ ರಚನೆ',
-      description: 'ಸರಳ ಪದಗಳನ್ನು ರೂಪಿಸಲು ಅಕ್ಷರಗಳನ್ನು ಜೋಡಿಸುವುದನ್ನು ಕಲಿಯಿರಿ.',
+      language: 'Telugu',
+      title: 'సరళ వాక్యాల నిర్మాణం',
+      description: 'పదాలను కలుపుతూ సరళమైన వాక్యాలను రాయడం నేర్చుకోండి.',
       learningMaterials: `
-# ಅಕ್ಷರಗಳನ್ನು ಸೇರಿಸಿ ಪದ ಮಾಡುವುದು
-ಅಕ್ಷರಗಳನ್ನು ಜೋಡಿಸುವುದರಿಂದ **ಪದಗಳು** ಸೃಷ್ಟಿಯಾಗುತ್ತವೆ:
-* **ಮ + ರ = ಮರ** (ಗಿಡದ ದೊಡ್ಡ ರೂಪ)
-* **ಹ + ಲ + ಗೆ = ಹಲಗೆ** (ಬರೆಯಲು ಬಳಸುವ ಬೋರ್ಡ್)
-* **ಮ + ನೆ = ಮನೆ** (ವಾಸಿಸುವ ಸ್ಥಳ)
+# వాక్య నిర్మాణం
+తెలుగులో ఒక పూర్తి వాక్యం ఏర్పడటానికి కర్త, కర్మ మరియు క్రియ ఉపయోగపడతాయి:
+* **రాము బడికి వెళ్తున్నాడు.** (క్రియ: వెళ్తున్నాడు)
+* **ఆవు గడ్డి మేస్తుంది.** (కర్త: ఆవు)
       `,
       exercises: [
-        {
-          question: 'ಮ ಮತ್ತು ರ ಅಕ್ಷರಗಳನ್ನು ಸೇರಿಸಿದರೆ ಯಾವ ಪದವಾಗುತ್ತದೆ?',
-          options: ['ಮನೆ', 'ಮರ', 'ಹಲಗೆ', 'ಬಾಗಿಲು'],
-          correctAnswer: 'ಮರ',
-        },
+        { question: '"గోపి చదువుతున్నాడు" లో క్రియ ఏది?', options: ['గోపి', 'చదువుతున్నాడు', 'పుస్తకం', 'బడి'], correctAnswer: 'చదువుతున్నాడు' }
       ],
-      status: 'published',
+      status: 'published'
     });
 
-    lesson2.translations.push(trans2En._id, trans2Hi._id, trans2Ta._id, trans2Kn._id);
+    lesson2.translations.push(trans2En._id, trans2Hi._id, trans2Ta._id, trans2Te._id);
     await lesson2.save();
 
-    console.log('Seed: Created Lessons and Translations.');
-
-    // 3. Create Curriculum
+    // 3. Create Pathways Curriculum
     const curriculum = await Curriculum.create({
-      title: 'Foundational Literacy Pathway',
-      description: 'A comprehensive curriculum designed to teach basic alphabet recognition, sound phonics, and simple word construction.',
+      title: 'Core Literacy Pathway',
+      description: 'A structured roadmap designed to build complete literacy confidence from sounds to reading stories.',
       difficulty: 'Beginner',
       order: 1,
       status: 'published',
       lessons: [lesson1._id, lesson2._id],
     });
 
-    console.log('Seed: Created Curriculum.');
+    console.log('Seed: Created Core Pathways and connected seeded lessons.');
 
-    // 4. Create Assessment and Questions
+    // 4. Create Standard Assessments & Questions
     const assessment = await Assessment.create({
-      title: 'Introduction to Literacy Assessment',
-      description: 'Evaluate your reading, writing, and comprehension skills based on the introductory units.',
+      title: 'Foundational Sound Review',
+      description: 'Evaluate your sound recognition and letter structure understanding.',
       type: 'Comprehension',
       difficulty: 'Beginner',
       status: 'published',
@@ -305,39 +276,29 @@ Practicing spelling helps in reading complete sentences.
     const q1 = await Question.create({
       assessmentId: assessment._id,
       type: 'Reading',
-      text: "Read the alphabet list. Identify the uppercase character that sounds like 'Bee':",
-      options: ['D', 'B', 'P', 'Q'],
-      correctAnswer: 'B',
+      text: "Identify the letter in English which is a vowel sound:",
+      options: ['F', 'P', 'A', 'N'],
+      correctAnswer: 'A',
       difficulty: 'Beginner',
       points: 20,
     });
 
     const q2 = await Question.create({
       assessmentId: assessment._id,
-      type: 'Writing',
-      text: "Choose the correct missing vowel letter to complete the word for a meowing pet: 'C _ T'",
-      options: ['A', 'E', 'I', 'O'],
-      correctAnswer: 'A',
-      difficulty: 'Beginner',
-      points: 20,
-    });
-
-    const q3 = await Question.create({
-      assessmentId: assessment._id,
       type: 'Comprehension',
-      text: "Read this sentence: 'The cat sat on the soft mat.' Question: Where did the cat sit?",
-      options: ['On the table', 'On the soft mat', 'On the floor', 'Outside'],
-      correctAnswer: 'On the soft mat',
+      text: "Read: 'The white cow gives sweet milk.' Question: What color is the cow?",
+      options: ['Red', 'Black', 'Brown', 'White'],
+      correctAnswer: 'White',
       difficulty: 'Beginner',
       points: 20,
     });
 
-    assessment.questions.push(q1._id, q2._id, q3._id);
+    assessment.questions.push(q1._id, q2._id);
     await assessment.save();
 
-    console.log('Seed: Created Assessment & Questions.');
+    console.log('Seed: Created Assessments and connected questions.');
 
-    console.log('Database seeded successfully!');
+    console.log('Database seeded successfully with multi-lingual pathways!');
     process.exit(0);
   } catch (error) {
     console.error('Error seeding database:', error.message);

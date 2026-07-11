@@ -17,8 +17,10 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import QuizIcon from '@mui/icons-material/Quiz';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import PersonIcon from '@mui/icons-material/Person';
+import ChatIcon from '@mui/icons-material/Chat';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { translate } from '../utils/i18n';
 
 const drawerWidth = 260;
 
@@ -29,31 +31,48 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle }) => {
 
   if (!user) return null;
 
+  const currentLang = user.preferredLanguage || 'English';
+
   const adminMenu = [
-    { text: 'Dashboard Overview', icon: <DashboardIcon />, path: '/dashboard' },
-    { text: 'Manage Curriculum', icon: <MenuBookIcon />, path: '/curriculum' },
-    { text: 'Manage Lessons', icon: <AutoStoriesIcon />, path: '/lessons' },
-    { text: 'Manage Assessments', icon: <QuizIcon />, path: '/assessment' },
-    { text: 'Learner Scores & Logs', icon: <AssignmentTurnedInIcon />, path: '/results' },
-    { text: 'My Profile', icon: <PersonIcon />, path: '/profile' },
+    { text: translate(currentLang, 'adminDashboard'), icon: <DashboardIcon />, path: '/dashboard' },
+    { text: translate(currentLang, 'curriculum'), icon: <MenuBookIcon />, path: '/curriculum' },
+    { text: translate(currentLang, 'lessons'), icon: <AutoStoriesIcon />, path: '/lessons' },
+    { text: translate(currentLang, 'assessments'), icon: <QuizIcon />, path: '/assessment' },
+    { text: translate(currentLang, 'viewStudentLogs'), icon: <AssignmentTurnedInIcon />, path: '/results' },
+    { text: translate(currentLang, 'profile'), icon: <PersonIcon />, path: '/profile' },
+  ];
+
+  const teacherMenu = [
+    { text: translate(currentLang, 'teacherDashboard'), icon: <DashboardIcon />, path: '/dashboard' },
+    { text: translate(currentLang, 'lessons'), icon: <AutoStoriesIcon />, path: '/lessons' },
+    { text: translate(currentLang, 'assessments'), icon: <QuizIcon />, path: '/assessment' },
+    { text: translate(currentLang, 'viewStudentLogs'), icon: <AssignmentTurnedInIcon />, path: '/results' },
+    { text: translate(currentLang, 'profile'), icon: <PersonIcon />, path: '/profile' },
   ];
 
   const learnerMenu = [
-    { text: 'Learner Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-    { text: 'Study Path', icon: <MenuBookIcon />, path: '/curriculum' },
-    { text: 'Assessments', icon: <QuizIcon />, path: '/assessment' },
-    { text: 'My Results', icon: <AssignmentTurnedInIcon />, path: '/results' },
-    { text: 'My Profile', icon: <PersonIcon />, path: '/profile' },
+    { text: translate(currentLang, 'dashboard'), icon: <DashboardIcon />, path: '/dashboard' },
+    { text: translate(currentLang, 'curriculum'), icon: <MenuBookIcon />, path: '/curriculum' },
+    { text: translate(currentLang, 'aiTutorChat'), icon: <ChatIcon />, path: '/ai-tutor' },
+    { text: translate(currentLang, 'assessments'), icon: <QuizIcon />, path: '/assessment' },
+    { text: translate(currentLang, 'results'), icon: <AssignmentTurnedInIcon />, path: '/results' },
+    { text: translate(currentLang, 'profile'), icon: <PersonIcon />, path: '/profile' },
   ];
 
-  const menuItems = user.role === 'admin' ? adminMenu : learnerMenu;
+  const getMenuItems = () => {
+    if (user.role === 'admin') return adminMenu;
+    if (user.role === 'teacher') return teacherMenu;
+    return learnerMenu;
+  };
+
+  const menuItems = getMenuItems();
 
   const drawerContent = (
     <Box>
       <Toolbar />
       <Box sx={{ p: 3 }}>
         <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 800, mb: 1, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
-          Menu
+          {translate(currentLang, 'menu')}
         </Typography>
       </Box>
       <List sx={{ px: 2 }}>

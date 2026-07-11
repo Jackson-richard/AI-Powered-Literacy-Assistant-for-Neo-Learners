@@ -34,6 +34,7 @@ const LanguageSelector = ({ size = 'small', showLabel = false }) => {
           <MenuItem value="English">🇬🇧 English</MenuItem>
           <MenuItem value="Hindi">🇮🇳 Hindi (हिंदी)</MenuItem>
           <MenuItem value="Tamil">🇮🇳 Tamil (தமிழ்)</MenuItem>
+          <MenuItem value="Telugu">🇮🇳 Telugu (తెలుగు)</MenuItem>
           <MenuItem value="Kannada">🇮🇳 Kannada (ಕನ್ನಡ)</MenuItem>
         </Select>
       </FormControl>

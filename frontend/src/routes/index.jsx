@@ -13,6 +13,7 @@ import LessonsPage from '../pages/Lessons';
 import LessonReader from '../pages/LessonReader';
 import AssessmentPage from '../pages/Assessment';
 import ResultsPage from '../pages/Results';
+import AITutorChat from '../pages/AITutorChat';
 
 const AppRoutes = () => {
   return (
@@ -68,6 +69,16 @@ const AppRoutes = () => {
           <ProtectedRoute allowedRoles={['learner']}>
             <DashboardLayout>
               <LessonReader />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/ai-tutor"
+        element={
+          <ProtectedRoute allowedRoles={['learner']}>
+            <DashboardLayout>
+              <AITutorChat />
             </DashboardLayout>
           </ProtectedRoute>
         }

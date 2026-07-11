@@ -65,10 +65,16 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Registration error:', err);
-      return {
-        success: false,
-        message: err.response?.data?.message || err.response?.data?.error || 'Registration failed',
-      };
+      const data = err.response?.data;
+      let message = 'Registration failed';
+      if (data?.message) {
+        message = data.message;
+      } else if (data?.error) {
+        message = Array.isArray(data.error) ? data.error.join(', ') : data.error;
+      } else if (data?.errors && Array.isArray(data.errors)) {
+        message = data.errors.map(e => e.message).join(', ');
+      }
+      return { success: false, message };
     }
   };
 
@@ -93,7 +99,7 @@ export const AuthProvider = ({ children }) => {
       // Let's ensure the API call updates it. We'll update the user state:
       const updatedUser = { ...user, preferredLanguage: language };
       setUser(updatedUser);
-      
+
       // Attempt backend update
       await axios.put(`${API_URL}/auth/profile`, { preferredLanguage: language });
     } catch (err) {

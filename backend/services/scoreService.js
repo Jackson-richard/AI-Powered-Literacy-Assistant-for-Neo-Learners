@@ -87,5 +87,58 @@ exports.gradeAssessment = async (userId, assessmentId, submissions) => {
     proficiency,
   });
 
+  // Update user XP, Streak, Hearts, and check achievements
+  try {
+    const User = require('../models/User');
+    const user = await User.findById(userId);
+    if (user) {
+      // 1. Add XP
+      user.xp += totalPointsScored;
+
+      // 2. Hearts modification: Deduct if failed (overall < 50%), reward if perfect
+      if (overallPercentage < 50) {
+        user.hearts = Math.max(0, user.hearts - 1);
+      } else if (overallPercentage === 100) {
+        user.hearts = Math.min(5, user.hearts + 1);
+      }
+
+      // 3. Streak calculation
+      const now = new Date();
+      const lastActiveDate = user.lastActive ? new Date(user.lastActive) : null;
+      
+      if (!lastActiveDate) {
+        user.streak = 1;
+      } else {
+        const diffTime = Math.abs(now.setHours(0,0,0,0) - lastActiveDate.setHours(0,0,0,0));
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+          user.streak += 1;
+        } else if (diffDays > 1) {
+          user.streak = 1;
+        }
+        // If diffDays is 0 (same day), streak stays the same
+      }
+      user.lastActive = new Date();
+
+      // 4. Achievement unlocking check
+      const hasAchievement = (title) => user.achievements.some(a => a.title === title);
+      
+      if (user.xp >= 100 && !hasAchievement('XP Collector')) {
+        user.achievements.push({ title: 'XP Collector', description: 'Accumulate more than 100 XP overall!' });
+      }
+      if (user.streak >= 3 && !hasAchievement('Streak Starter')) {
+        user.achievements.push({ title: 'Streak Starter', description: 'Maintain a 3-day learning streak.' });
+      }
+      if (overallPercentage === 100 && !hasAchievement('Perfectionist')) {
+        user.achievements.push({ title: 'Perfectionist', description: 'Score a perfect 100% on any assessment.' });
+      }
+
+      await user.save();
+    }
+  } catch (err) {
+    console.error('Error updating user gamified stats during grading:', err);
+  }
+
   return result;
 };
