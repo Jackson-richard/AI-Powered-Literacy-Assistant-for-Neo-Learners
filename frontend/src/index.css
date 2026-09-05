@@ -16,7 +16,7 @@ body {
   width: 100%;
 }
 
-/* Accessibility: High Contrast Modes */
+
 .high-contrast-active {
   background-color: #000000 !important;
 }
